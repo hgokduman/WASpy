@@ -1,0 +1,15 @@
+<?php
+define('WASPY_ENVIRONMENT', 'LIVE');
+
+$config['debug']			= false;
+
+$config['db']['host']		= 'localhost',
+$config['db']'user']  		= 'WASpy',
+$config['db']'pass']  		= '',
+$config['db']'name']  		= 'WASpy'
+
+$config['phone']['phone'] 	= '',
+$config['phone']['ident']	= '',
+$config['phone']['name'] 	= 'WhatsApp Spy',
+$config['phone']['pass']	= ''
+?>
