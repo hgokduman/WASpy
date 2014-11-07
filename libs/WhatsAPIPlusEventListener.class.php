@@ -5,9 +5,14 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
      *  This method will get all event calls.
      * 
      */
-    protected function handleEvent($eventName, array $arguments, $implemented = false) {
+    protected function handleEvent($eventName, array $arguments) {
+        $implementedEventHandlers = Array('onPresence', 'onSendPresence', 'onGetMessage');
+        $implemented = in_array($eventName, $implementedEventHandlers);
         if(!$implemented) {
             echo 'Unimplemented event fired: ' . $eventName . PHP_EOL;
+        } else {
+            echo 'Implemented event fired: ' . $eventName . PHP_EOL;
+            var_dump($arguments);
         }
     }
 
