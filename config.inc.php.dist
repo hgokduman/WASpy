@@ -1,16 +1,17 @@
 <?php
-define('WASPY_ENVIRONMENT', 'LIVE');
-define('WASPY_DIR', '/path/to/waspy/folder/without/trailing/slash');
+const WASPY_ENV     = 'LIVE';
+const WASPY_DIR     = '/path/to/waspy/folder/without/trailing/slash'
+const WASPY_GMAN    = 'WASPY_LIVE';
 
-$config['debug']			= false;
+const PHONE_NUMBER  = '';
+const PHONE_IDENT   = '';
+const PHONE_ALIAS   = '';
+const PHONE_PASS    = '';
 
-$config['db']['host']		= 'localhost';
-$config['db']['user']  		= 'WASpy';
-$config['db']['pass']  		= '';
-$config['db']['name']  		= 'WASpy';
+const DB_HOST       = '';
+const DB_USER       = '';
+const DB_PASS       = '';
+const DB_NAME       = '';
 
-$config['phone']['phone'] 	= '';
-$config['phone']['ident']	= '';
-$config['phone']['name'] 	= 'WhatsApp Spy';
-$config['phone']['pass']	= '';
+const DEBUG         = false
 ?>
