@@ -1,15 +1,16 @@
 <?php
 define('WASPY_ENVIRONMENT', 'LIVE');
+define('WASPY_DIR', '/path/to/waspy/folder/without/trailing/slash');
 
 $config['debug']			= false;
 
-$config['db']['host']		= 'localhost',
-$config['db']'user']  		= 'WASpy',
-$config['db']'pass']  		= '',
-$config['db']'name']  		= 'WASpy'
+$config['db']['host']		= 'localhost';
+$config['db']['user']  		= 'WASpy';
+$config['db']['pass']  		= '';
+$config['db']['name']  		= 'WASpy';
 
-$config['phone']['phone'] 	= '',
-$config['phone']['ident']	= '',
-$config['phone']['name'] 	= 'WhatsApp Spy',
-$config['phone']['pass']	= ''
+$config['phone']['phone'] 	= '';
+$config['phone']['ident']	= '';
+$config['phone']['name'] 	= 'WhatsApp Spy';
+$config['phone']['pass']	= '';
 ?>
