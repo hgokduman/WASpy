@@ -2,3 +2,4 @@ config.inc.php
 nextChallenge.dat
 cli/test/
 nohup.out
+.htaccess
