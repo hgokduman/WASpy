@@ -52,6 +52,13 @@ $GWorker->addFunction(WASPY_GMAN . '_EventDebug', function(GearmanJob $job) {
 		return null;
 	} 
 	list($event, $workload) = unserialize($job->workload());
+	
+	
+	// exclude events from being logged...
+	if(in_array($event, array('onSendPong'))) {
+		return null;
+	}
+	
 	if ($stmt = GetDb()->prepare('INSERT INTO ' . DB_PREFIX . 'events (event_name, workload, inserted) VALUES (?, ?, ?)')) {
 		$stmt->bind_param('sss', $event, serialize($workload), ts2date(time()));
 		$stmt->execute();
