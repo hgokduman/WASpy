@@ -8,7 +8,7 @@ $GWorker= new GearmanWorker();
 $GWorker->addServer();
 $GWorker->setId(WASPY_GMAN . '_Connect_' . uniqid(true));
 
-$WhatsApp = new WhatsAPIPlus(PHONE_NUMBER, PHONE_IDENT, PHONE_ALIAS, PHONE_PASS, DEBUG);
+$WhatsApp = new WhatsAPIPlus(PHONE_NUMBER, PHONE_IDENT, PHONE_ALIAS, PHONE_PASS, DEBUG_PROTO);
 $WhatsApp->eventManager()->addEventListener(new WhatsAPIPlusEventListener());
 $WhatsApp->connectAndLogin();
 
@@ -18,8 +18,7 @@ function GetWhatsApp() {
 }
 
 $GWorker->addFunction(WASPY_GMAN . '_RequestLastSeen', function(GearmanJob $job) {
-	$phone = $job->workload();
-	GetWhatsApp()->sendGetRequestLastSeen($phone);
+	GetWhatsApp()->sendGetRequestLastSeen($job->workload());
 });
 $GWorker->addFunction(WASPY_GMAN . '_PresenceSubscribe', function(GearmanJob $job) {
 	GetWhatsApp()->sendPresenceSubscription($job->workload());
