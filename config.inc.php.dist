@@ -16,4 +16,5 @@ const DB_PREFIX     = '';
 
 const DEBUG_EVENTS  = false;
 const DEBUG_PROTO   = false;
+const KEEP_ALIVE    = 5;
 ?>
