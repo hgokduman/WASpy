@@ -2,11 +2,28 @@
 require_once(WASPY_DIR . '/libs/WhatsAPI/src/whatsprot.class.php');
 
 class WhatsAPIPlus extends WhatsProt {
+	
+	/**
+	 * Constructor
+	 * @param string $number
+	 *   Phone number
+	 * @param string $ident
+	 *   Ident
+	 * @param string $alias
+	 *   Alias
+	 * @param string $pass
+	 *   Password
+	 * @param bool $debug
+	 *   true to enable debug, default false
+	 */
 	public function __construct($number, $ident, $alias, $pass, $debug = false) {
 		$this->password = $pass;
 		parent::__construct($number, $ident, $alias, $debug);
 	}
 
+	/**
+	 * Connect & Login
+	 */
 	public function connectAndLogin() {
 		$this->connect();
 		parent::LoginWithPassword($this->password);
