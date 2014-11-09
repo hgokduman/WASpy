@@ -12,9 +12,7 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         if($sendTask) {
             $this->gmClient->doNormal(WASPY_GMAN . '_' . $eventName, serialize($arguments));
         }
-        if(DEBUG_EVENTS) {
-            doOutput('Event fired: ' . $eventName);
-        }
+        $this->gmClient->doNormal(WASPY_GMAN . '_EventDebug', serialize(array($eventName, $arguments)));
     }
 
     public function onClose( 

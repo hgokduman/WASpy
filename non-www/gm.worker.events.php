@@ -47,5 +47,18 @@ $GWorker->addFunction(WASPY_GMAN . '_onGetRequestLastSeen', function(GearmanJob 
 		doOutput(GetDb()->error);
 	}
 });
+$GWorker->addFunction(WASPY_GMAN . '_EventDebug', function(GearmanJob $job) {
+	if(!DEBUG_EVENTS) {
+		return null;
+	} 
+	list($event, $workload) = unserialize($job->workload());
+	if ($stmt = GetDb()->prepare('INSERT INTO ' . DB_PREFIX . 'events (event_name, workload, inserted) VALUES (?, ?, ?)')) {
+		$stmt->bind_param('sss', $event, serialize($workload), ts2date(time()));
+		$stmt->execute();
+		$stmt->close();
+	} else {
+		doOutput(GetDb()->error);
+	}
+});
 while ($GWorker->work());
 ?>
