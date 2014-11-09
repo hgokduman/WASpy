@@ -4,3 +4,4 @@ non-www/test
 non-www/.pid/*.pid
 nohup.out
 .htaccess
+logos
