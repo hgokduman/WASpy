@@ -1,5 +1,5 @@
 config.inc.php
 nextChallenge.dat
-cli/test/
+non-www/test/
 nohup.out
 .htaccess
