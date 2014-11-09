@@ -16,8 +16,7 @@ function GetDb() {
 }
 
 $GWorker->addFunction(WASPY_GMAN . '_onPresence', function(GearmanJob $job) {
-	$workload = unserialize($job->workload());
-	$presence = $workload[1];
+	$presence = unserialize($job->workload());
 	if ($stmt = GetDb()->prepare('INSERT INTO ' . DB_PREFIX . 'presence (phone_rcpt, phone_from, status, received) VALUES (?, ?, ?, ?)')) {
 		$stmt->bind_param('ssss', $presence[0], jid2phone($presence[1]), $presence[2], ts2date(time()));
 		$stmt->execute();
@@ -27,8 +26,7 @@ $GWorker->addFunction(WASPY_GMAN . '_onPresence', function(GearmanJob $job) {
 	}
 });
 $GWorker->addFunction(WASPY_GMAN . '_onGetMessage', function(GearmanJob $job) {
-	$workload = unserialize($job->workload());
-	$msg = $workload[1];
+	$msg = unserialize($job->workload());
 	if ($stmt = GetDb()->prepare('INSERT INTO ' . DB_PREFIX . 'messages (phone_rcpt, phone_from, msgid, msgtype, msgtime, sender, body, received) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')) {
 		$bodyDB = $msg[3] == 'text' ? $msg[6] : null;
 		$stmt->bind_param('ssssssss', $msg[0], jid2phone($msg[1]), $msg[2], $msg[3], Ts2Date($msg[4]), $msg[5], $bodyDB, Ts2Date(time()));
@@ -39,8 +37,7 @@ $GWorker->addFunction(WASPY_GMAN . '_onGetMessage', function(GearmanJob $job) {
 	}
 });
 $GWorker->addFunction(WASPY_GMAN . '_onGetRequestLastSeen', function(GearmanJob $job) {
-	$workload = unserialize($job->workload());
-	$lastseen = $workload[1];
+	$lastseen = unserialize($job->workload());
 	$lastseenTs = (int) substr($lastseen[2], strpos($lastseen[2], '-')+1, strrpos($lastseen[2], '-')-strpos($lastseen[2], '-')-1) - $lastseen[3];
 	if ($stmt = GetDb()->prepare('INSERT INTO ' . DB_PREFIX . 'lastseen (phone_rcpt, phone_from, msgid, lastseen, received) VALUES (?, ?, ?, ?, ?)')) {
 		$stmt->bind_param('sssss', $lastseen[0], jid2phone($lastseen[1]), $lastseen[2], ts2date($lastseenTs), ts2date(time()));
