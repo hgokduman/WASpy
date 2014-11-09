@@ -6,6 +6,6 @@ $client->addServer();
 while(true) {
 	echo $client->do(WASPY_GMAN . '_PollMessages', 1);
 	echo $client->do(WASPY_GMAN . '_SendPong', 1);
-	sleep(5);
+	sleep(KEEP_ALIVE);
 }
 ?>

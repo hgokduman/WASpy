@@ -1,29 +1,30 @@
 <?php
 
 class WhatsAPIPlusEventListener implements WhatsAppEventListener {
-    /**
-     *  This method will get all event calls.
-     * 
-     */
-    protected function handleEvent($eventName, array $arguments) {
-        $implementedEventHandlers = Array('onPresence', 'onSendPresence', 'onGetMessage');
-        $implemented = in_array($eventName, $implementedEventHandlers);
-        if(!$implemented) {
-            echo 'Unimplemented event fired: ' . $eventName . PHP_EOL;
-        } else {
-            echo 'Implemented event fired: ' . $eventName . PHP_EOL;
-            var_dump($arguments);
+    private $gmClient;
+    
+    public function __construct() {
+        $this->gmClient= new GearmanClient();
+        $this->gmClient->addServer();   
+    }
+    
+    private function handleEvent($eventName, array $arguments, $sendTask = false) {
+        if($sendTask) {
+            $this->gmClient->doNormal(WASPY_GMAN . '_' . $eventName, serialize(func_get_args()));
+        }
+        if(DEBUG_EVENTS) {
+            doOutput('Event fired: ' . $eventName);
         }
     }
 
-    function onClose( 
+    public function onClose( 
         $phone, 
         $error  
     ) {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onCodeRegister(
+    public function onCodeRegister(
         $phone,  
         $login,  
         $pw,     
@@ -38,7 +39,7 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());      
     }
     
-    function onCodeRegisterFailed(
+    public function onCodeRegisterFailed(
         $phone,  
         $status,  
         $reason,  
@@ -47,7 +48,7 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
     
-    function onCodeRequest(
+    public function onCodeRequest(
         $phone, 
         $method,
         $length
@@ -55,7 +56,7 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
     
-    function onCodeRequestFailed(
+    public function onCodeRequestFailed(
         $phone, 
         $method, 
         $reason, 
@@ -64,7 +65,7 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
     
-   function onCodeRequestFailedTooRecent(
+   public function onCodeRequestFailedTooRecent(
         $phone, 
         $method, 
         $reason, 
@@ -73,14 +74,14 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
     
-   function onConnect(
+   public function onConnect(
         $phone, 
         $socket 
     ) {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onCredentialsBad(
+    public function onCredentialsBad(
         $phone, 
         $status, 
         $reason 
@@ -88,7 +89,7 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onCredentialsGood(
+    public function onCredentialsGood(
         $phone, 
         $login, 
         $pw, 
@@ -103,14 +104,14 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onDisconnect(
+    public function onDisconnect(
         $phone, 
         $socket 
     ) {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onDissectPhone(
+    public function onDissectPhone(
         $phone, 
         $country, 
         $cc, 
@@ -121,13 +122,13 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onDissectPhoneFailed(
+    public function onDissectPhoneFailed(
         $phone 
     ) {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onGetAudio(
+    public function onGetAudio(
         $phone, 
         $from, 
         $msgid, 
@@ -145,7 +146,7 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onGetError(
+    public function onGetError(
         $phone,
         $id,
         $error 
@@ -153,21 +154,21 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onGetGroups(
+    public function onGetGroups(
         $phone,
         $groupList
     ) {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onGetGroupsInfo(
+    public function onGetGroupsInfo(
         $phone, 
         $groupList
     ) {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onGetGroupsSubject(
+    public function onGetGroupsSubject(
         $phone, 
         $gId, 
         $time,
@@ -179,7 +180,7 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onGetImage(
+    public function onGetImage(
         $phone,
         $from,
         $msgid,
@@ -198,7 +199,7 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onGetLocation(
+    public function onGetLocation(
         $phone,
         $from,
         $msgid,
@@ -214,7 +215,7 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onGetMessage(
+    public function onGetMessage(
         $phone,
         $from,
         $msgid,
@@ -223,12 +224,10 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $name,
         $message
     ) {
-        $func = __FUNCTION__;
-        $args = func_get_args();
-        $this->handleEvent($func, $args);
+        $this->handleEvent(__FUNCTION__, func_get_args(), true);
     }
 
-    function onGetGroupMessage(
+    public function onGetGroupMessage(
         $phone,
         $from,
         $author,
@@ -241,7 +240,7 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onGetPrivacyBlockedList(
+    public function onGetPrivacyBlockedList(
         $phone,
         $children
             /*
@@ -256,7 +255,7 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onGetProfilePicture(
+    public function onGetProfilePicture(
         $phone,
         $from,
         $type,
@@ -265,16 +264,16 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
     
-    function onGetRequestLastSeen(
+    public function onGetRequestLastSeen(
         $phone,
         $from,
         $msgid,
         $sec
     ) {
-        $this->handleEvent(__FUNCTION__, func_get_args());
+        $this->handleEvent(__FUNCTION__, func_get_args(), true);
     }
 
-    function onGetServerProperties(
+    public function onGetServerProperties(
         $phone,
         $version,
         $properties
@@ -282,7 +281,7 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onGetvCard(
+    public function onGetvCard(
         $phone,
         $from,
         $msgid,
@@ -295,7 +294,7 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onGetVideo(
+    public function onGetVideo(
         $phone,
         $from,
         $msgid,
@@ -315,21 +314,21 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onGroupsChatCreate(
+    public function onGroupsChatCreate(
         $phone,
         $gId
     ) {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onGroupsChatEnd(
+    public function onGroupsChatEnd(
         $phone,
         $gId
     ) {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onGroupsParticipantsAdd(
+    public function onGroupsParticipantsAdd(
         $phone,
         $groupId,
         $participant
@@ -337,7 +336,7 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onGroupsParticipantsRemove(
+    public function onGroupsParticipantsRemove(
         $phone,
         $groupId,
         $participant,
@@ -346,13 +345,13 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onLogin(
+    public function onLogin(
         $phone
     ) {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onMessageComposing(
+    public function onMessageComposing(
         $phone,
         $from,
         $msgid,
@@ -362,7 +361,7 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onMessagePaused(
+    public function onMessagePaused(
         $phone,
         $from,
         $msgid,
@@ -372,7 +371,7 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onMessageReceivedClient(
+    public function onMessageReceivedClient(
         $phone,
         $from,
         $msgid,
@@ -382,7 +381,7 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onMessageReceivedServer(
+    public function onMessageReceivedServer(
         $phone,
         $from,
         $msgid,
@@ -391,22 +390,22 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onPing(
+    public function onPing(
         $phone,
         $msgid
     ) {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onPresence(
+    public function onPresence(
         $phone,
         $from,
         $type
     ) {
-        $this->handleEvent(__FUNCTION__, func_get_args());
+        $this->handleEvent(__FUNCTION__, func_get_args(), true);
     }
 
-    function onSendMessageReceived(
+    public function onSendMessageReceived(
         $phone,
         $id,
         $from,
@@ -415,14 +414,14 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onSendPong(
+    public function onSendPong(
         $phone,
         $msgid
     ) {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onSendPresence(
+    public function onSendPresence(
         $phone,
         $type,
         $name
@@ -430,14 +429,14 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onSendStatusUpdate(
+    public function onSendStatusUpdate(
         $phone,
         $msg
     ) {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
     
-    function onUploadFile(
+    public function onUploadFile(
         $phone,
         $name,
         $url
@@ -445,7 +444,7 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    function onUploadFileFailed(
+    public function onUploadFileFailed(
         $phone,
         $name
     ) {
@@ -536,10 +535,6 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $this->handleEvent(__FUNCTION__, func_get_args());
     }
 
-    /**
-     * @param SyncResult $result
-     * @return mixed|void
-     */
     public function onGetSyncResult(
         $result
     ) {
@@ -552,7 +547,7 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $offline,
         $retry
     ) {
-        $this->handleEvent(__FUNCTION__, func_get_args());
+        $this->handleEvent(__FUNCTION__, func_get_args(), true);
     }
 
 }
