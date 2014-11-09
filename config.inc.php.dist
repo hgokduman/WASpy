@@ -14,5 +14,6 @@ const DB_PASS       = '';
 const DB_NAME       = '';
 const DB_PREFIX     = '';
 
-const DEBUG         = false
+const DEBUG_EVENTS  = false;
+const DEBUG_PROTO   = false;
 ?>
