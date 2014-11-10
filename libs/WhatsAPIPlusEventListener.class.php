@@ -76,7 +76,7 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $phone, 
         $socket 
     ) {
-        $this->handleEvent(__FUNCTION__, func_get_args());
+        $this->handleEvent(__FUNCTION__, func_get_args(), true);
     }
 
     public function onCredentialsBad(
@@ -106,7 +106,7 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $phone, 
         $socket 
     ) {
-        $this->handleEvent(__FUNCTION__, func_get_args());
+        $this->handleEvent(__FUNCTION__, func_get_args(), true);
     }
 
     public function onDissectPhone(
@@ -530,7 +530,7 @@ class WhatsAPIPlusEventListener implements WhatsAppEventListener {
         $id, 
         $node
     ) {
-        $this->handleEvent(__FUNCTION__, func_get_args());
+        $this->handleEvent(__FUNCTION__, func_get_args(), true);
     }
 
     public function onGetSyncResult(

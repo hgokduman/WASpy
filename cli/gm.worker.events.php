@@ -67,5 +67,23 @@ $GWorker->addFunction(WASPY_GMAN . '_EventDebug', function(GearmanJob $job) {
 		doOutput(GetDb()->error);
 	}
 });
+$GWorker->addFunction(WASPY_GMAN . '_onConnect', function(GearmanJob $job) {
+	if ($stmt = GetDb()->prepare('insert into ' . DB_PREFIX . 'presence (phone_rcpt, phone_from, status, received) select phone_rcpt, phone_from, \'start\' status, now() received from ' . DB_PREFIX . 'subscriptions_active')) {
+		$stmt->execute();
+		$stmt->close();
+	} else {
+		doOutput(GetDb()->error);
+	}	
+	return true;
+});
+$GWorker->addFunction(WASPY_GMAN . '_onDisconnect', function(GearmanJob $job) {
+	if ($stmt = GetDb()->prepare('insert into ' . DB_PREFIX . 'presence (phone_rcpt, phone_from, status, received) select phone_rcpt, phone_from, \'stop\' status, now() received from ' . DB_PREFIX . 'subscriptions_active')) {
+		$stmt->execute();
+		$stmt->close();
+	} else {
+		doOutput(GetDb()->error);
+	}
+	return true;
+});
 while ($GWorker->work());
 ?>

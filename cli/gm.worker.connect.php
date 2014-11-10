@@ -9,9 +9,11 @@ $GWorker->addServer();
 $GWorker->setId(WASPY_GMAN . '_Connect_' . uniqid(true));
 
 $WhatsApp = new WhatsAPIPlus(PHONE_NUMBER, PHONE_IDENT, PHONE_ALIAS, PHONE_PASS, DEBUG_PROTO);
+echo '1';
 $WhatsApp->eventManager()->addEventListener(new WhatsAPIPlusEventListener());
+echo '2';
 $WhatsApp->connectAndLogin();
-
+echo '3';
 function GetWhatsApp() {
     global $WhatsApp;
     return $WhatsApp;
@@ -31,6 +33,14 @@ $GWorker->addFunction(WASPY_GMAN . '_PollMessages', function(GearmanJob $job) {
 });
 $GWorker->addFunction(WASPY_GMAN . '_SendPong', function(GearmanJob $job) {
 	GetWhatsApp()->sendPong(time());
+});
+$GWorker->addFunction(WASPY_GMAN . '_SendMessage', function(GearmanJob $job) {
+	list($rcpt, $txt) = $job->workload();
+	GetWhatsApp()->sendMessage($rcpt, $txt);
+});
+$GWorker->addFunction(WASPY_GMAN . '_Connect_Close', function(GearmanJob $job) {
+	GetWhatsApp()->disconnect();
+	return true;
 });
 
 while ($GWorker->work());

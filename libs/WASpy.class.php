@@ -168,5 +168,9 @@ class WASpy {
 	    
 	    // get data from db...
 	}
+	
+	public function sendMessage($rcpt, $txt) {
+	    $this->gmClient->doNormal(WASPY_GMAN . '_SendMessage', serialize(Array($rcpt, $txt)));
+	}
 }
 ?>
