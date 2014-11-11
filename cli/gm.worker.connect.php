@@ -35,7 +35,7 @@ $GWorker->addFunction(WASPY_GMAN . '_SendPong', function(GearmanJob $job) {
 	GetWhatsApp()->sendPong(time());
 });
 $GWorker->addFunction(WASPY_GMAN . '_SendMessage', function(GearmanJob $job) {
-	list($rcpt, $txt) = $job->workload();
+	list($rcpt, $txt) = unserialize($job->workload());
 	GetWhatsApp()->sendMessage($rcpt, $txt);
 });
 $GWorker->addFunction(WASPY_GMAN . '_Connect_Close', function(GearmanJob $job) {
