@@ -4,7 +4,7 @@ require_once(WASPY_DIR . '/libs/functions.inc.php');
 
 $GWorker= new GearmanWorker();
 $GWorker->addServer();
-$GWorker->setId(WASPY_GMAN . '_Events_' . uniqid(true));
+$GWorker->setId(WASPY_GMAN . '_Events');
 
 $GClient= new GearmanClient();
 $GClient->addServer();

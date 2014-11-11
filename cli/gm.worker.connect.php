@@ -6,14 +6,11 @@ require_once(WASPY_DIR . '/libs/WhatsAPIPlusEventListener.class.php');
 
 $GWorker= new GearmanWorker();
 $GWorker->addServer();
-$GWorker->setId(WASPY_GMAN . '_Connect_' . uniqid(true));
+$GWorker->setId(WASPY_GMAN . '_Connect');
 
 $WhatsApp = new WhatsAPIPlus(PHONE_NUMBER, PHONE_IDENT, PHONE_ALIAS, PHONE_PASS, DEBUG_PROTO);
-echo '1';
 $WhatsApp->eventManager()->addEventListener(new WhatsAPIPlusEventListener());
-echo '2';
 $WhatsApp->connectAndLogin();
-echo '3';
 function GetWhatsApp() {
     global $WhatsApp;
     return $WhatsApp;
