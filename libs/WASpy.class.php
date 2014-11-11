@@ -54,12 +54,6 @@ class WASpy {
 			$stmt->bind_param('sss', $this->phone_number, $phone, ts2date(time()));
 			$stmt->execute();
 			$stmt->close();
-			/*$stmt = $this->db->prepare('INSERT INTO presence (phone_rcpt, phone_from, status, received) VALUES (?, ?, ?, ?)');
-			$phone_rcpt = '0000000';
-			$status = 'Start';
-			$stmt->bind_param('ssss', $phone_rcpt, $phone, $status, ts2date(time()));
-			$stmt->execute();
-			$stmt->close(); */
 	    }
         $this->gmClient->doNormal(WASPY_GMAN . '_PresenceSubscribe', $phone);
 	}
@@ -169,6 +163,16 @@ class WASpy {
 	    // get data from db...
 	}
 	
+	/**
+	 * sendMessage
+	 * 
+	 * @param string $rcpt
+	 *   phone_number to send message to
+	 * 
+	 * @param string $txt
+	 *   text to send
+	 * 
+	 */
 	public function sendMessage($rcpt, $txt) {
 	    $this->gmClient->doNormal(WASPY_GMAN . '_SendMessage', serialize(Array($rcpt, $txt)));
 	}
