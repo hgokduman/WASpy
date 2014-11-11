@@ -6,13 +6,23 @@ $GWorker= new GearmanWorker();
 $GWorker->addServer();
 $GWorker->setId(WASPY_GMAN . '_Events_' . uniqid(true));
 
+$GClient= new GearmanClient();
+$GClient->addServer();
+
+
 $Db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 if ($Db->connect_errno) {
 	doOutput("Failed to connect to MySQL: (" . $Db->connect_errno . ") " . $Db->connect_error);
 }
+
 function GetDb() {
     global $Db;
     return $Db;
+}
+
+function GetGClient() {
+	global $GClient;
+	return $GClient;
 }
 
 $GWorker->addFunction(WASPY_GMAN . '_onPresence', function(GearmanJob $job) {
@@ -71,6 +81,16 @@ $GWorker->addFunction(WASPY_GMAN . '_onConnect', function(GearmanJob $job) {
 	if ($stmt = GetDb()->prepare('insert into ' . DB_PREFIX . 'presence (phone_rcpt, phone_from, status, received) select phone_rcpt, phone_from, \'start\' status, now() received from ' . DB_PREFIX . 'subscriptions_active')) {
 		$stmt->execute();
 		$stmt->close();
+		
+		//re-subscribe to active_subscribers
+		if($stmt = GetDb()->prepare('SELECT phone_from FROM ' . DB_PREFIX . 'active_subscribers WHERE phone_rcpt = ?')) {
+			$stmt->bind_param('s', PHONE_NUMBER);
+			$stmt->bind_result($phone_from);
+			while($stmt->fetch()) {
+				GetGClient()->doNormal(WASPY_GMAN . '_PresenceSubscribe', $phone_from);
+			}
+			$stmt->close();
+		}
 	} else {
 		doOutput(GetDb()->error);
 	}	
