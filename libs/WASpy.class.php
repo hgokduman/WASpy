@@ -176,5 +176,29 @@ class WASpy {
 	public function sendMessage($rcpt, $txt) {
 	    $this->gmClient->doNormal(WASPY_GMAN . '_SendMessage', serialize(Array($rcpt, $txt)));
 	}
+	
+	/**
+	 * getPresenceData
+	 * 
+	 * @param string $phone
+	 *   phone_number
+	 * 
+	 * @param int $rows
+	 *   number of rows
+	 * 
+	 */
+	public function getPresenceData($phone=null, $rows=100) {
+		$rows = Array();
+		if($stmt = $this->db->prepare('SELECT id, phone_from phone_number, status, received FROM ' . DB_PREFIX . 'presence WHERE phone_from like ? order by id desc limit 100')) {
+			$stmt->bind_param('s', is_null($phone) ? '%' : $phone);
+			$stmt->execute();
+			$stmt->bind_result($id, $phone_number, $status, $received);
+			while($stmt->fetch()) {
+				$rows[] = Array('id' => $id, 'phone_number'=> $phone_number, 'status'=>$status, 'received' => $received);
+			}
+			$stmt->close();
+		}
+		return $rows;
+	}
 }
 ?>
