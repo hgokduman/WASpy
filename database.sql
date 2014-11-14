@@ -70,10 +70,11 @@ CREATE TABLE %db_prefix%notifications (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE %db_prefix%pushmessages (
-  id bigint(20) NOT NULL AUTO_INCREMENT,
+  request_id varchar(30) NOT NULL,
+  receipt_id varchar(30) NULL DEFAULT NULL,
   title varchar(30) NOT NULL,
   message varchar(250) NOT NULL,
   ts_sent timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   ts_ack timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (id)
+  PRIMARY KEY (request_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;

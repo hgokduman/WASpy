@@ -46,7 +46,8 @@ $GWorker->addFunction(WASPY_GMAN . '_onPresence', function(GearmanJob $job) {
 		$stmt->bind_param('ssss', $presence[0], jid2phone($presence[1]), $presence[2], ts2date(time()));
 		$stmt->execute();
 		$stmt->close();
-		// pushover test
+
+		// send push notification
 		if(GetSpy()->needToNotify(jid2phone($presence[1]), 'onPresence', $presence[2])) {
 			GetPush()->sendMessage(PUSHOVER_KEY, jid2phone($presence[1]) . ' is ' . $presence[2], Array());
 		}
@@ -62,7 +63,7 @@ $GWorker->addFunction(WASPY_GMAN . '_onGetMessage', function(GearmanJob $job) {
 		$stmt->execute();
 		$stmt->close();
 		
-		// pushover test
+		// send push notification
 		if(GetSpy()->needToNotify(jid2phone($msg[1]), 'onGetMessage')) {
 			GetPush()->sendMessage(PUSHOVER_KEY, 'Message received from ' . jid2phone($msg[1]), Array(), true);
 		}

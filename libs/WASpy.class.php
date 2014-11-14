@@ -209,7 +209,7 @@ class WASpy {
 			$stmt->fetch();
 			$stmt->close();
 			
-			echo $rows;
+			// check if a notification was sent for the same event in past PUSHOVER_NAG minutes. If so, return false.
 			if($rows > 0) {
 				return true;
 			}

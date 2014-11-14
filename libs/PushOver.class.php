@@ -5,12 +5,13 @@ class PushOver {
     private $api_key;
     private $api_url = 'https://api.pushover.net/1/messages.json';
     private $enabled = false;
+    private $title;
 
     /**
      * Constructor
      * 
      */
-	public function __construct($api_key) {
+	public function __construct($api_key, $title) {
 		
 		/*$this->db = new mysqli($host, $user, $pass, $name);
 		if ($this->db->connect_errno) {
@@ -18,6 +19,7 @@ class PushOver {
 		}*/
 		
 		$this->api_key = $api_key;
+		$this->title = $title;
 		$this->gmClient	= new GearmanClient();
 		$this->gmClient->addServer();
 		
@@ -59,7 +61,10 @@ class PushOver {
 	} 
 	
 	private function doSendMessage($userFields) {
-	    $defaultFields = array('token' => $this->api_key, 'timestamp' => time());
+	    $defaultFields = array('token' => $this->api_key, 'timestamp' => time(), 'title' => $this->title);
+	    if(isset($userFields['title'])) {
+	    	unset($defaultFields['title']);
+	    }
 	    $postFields = array_merge($defaultFields, $userFields);
         curl_setopt_array($ch = curl_init(), array(
             CURLOPT_URL => $this->api_url,
@@ -68,6 +73,8 @@ class PushOver {
         ));
         curl_exec($ch);
         curl_close($ch);
+        
+        // insert into database
 	}
 }
 ?>

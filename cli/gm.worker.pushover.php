@@ -17,7 +17,7 @@ if ($Db->connect_errno) {
 }
 
 
-$Push = new PushOver(PUSHOVER_API);
+$Push = new PushOver(PUSHOVER_API, PUSHOVER_APP);
 
 function GetDb() {
     global $Db;
@@ -35,7 +35,6 @@ function GetPush() {
 }
 
 $GWorker->addFunction(WASPY_GMAN . '_sendPushMessage', function(GearmanJob $job) {
-	echo 'push event' . PHP_EOL;
 	GetPush()->sendMessage($job, true, false);
 });
 while ($GWorker->work());

@@ -18,6 +18,8 @@ const DEBUG_EVENTS  = false;
 const DEBUG_PROTO   = false;
 const KEEP_ALIVE    = 5;
 
+const PUSHOVER_APP  = 'WASpy';
 const PUSHOVER_API  = '';
 const PUSHOVER_KEY  = '';
+const PUSHOVER_NAG  = 3;
 ?>
