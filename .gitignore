@@ -2,6 +2,6 @@ config.inc.php
 nextChallenge.dat
 cli/test
 cli/.pid/*.pid
-nohup.out
+cli/.nohup/*.out
 .htaccess
 logos

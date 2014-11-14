@@ -200,5 +200,21 @@ class WASpy {
 		}
 		return $rows;
 	}
+	
+	public function needToNotify($phone, $event, $value = '%') {
+		if($stmt = $this->db->prepare('SELECT count(*) FROM ' . DB_PREFIX . 'notifications WHERE phone_from = ? and eventName = ? and eventValue like ?')) {
+			$stmt->bind_param('sss', $phone, $event, is_null($value) ? '%' : $value);
+			$stmt->execute();
+			$stmt->bind_result($rows);
+			$stmt->fetch();
+			$stmt->close();
+			
+			echo $rows;
+			if($rows > 0) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
 ?>

@@ -1,6 +1,8 @@
 <?php
 require_once('../config.inc.php');
 require_once(WASPY_DIR . '/libs/functions.inc.php');
+require_once(WASPY_DIR . '/libs/PushOver.class.php');
+require_once(WASPY_DIR . '/libs/WASpy.class.php');
 
 $GWorker= new GearmanWorker();
 $GWorker->addServer();
@@ -9,6 +11,9 @@ $GWorker->setId(WASPY_GMAN . '_Events');
 $GClient= new GearmanClient();
 $GClient->addServer();
 
+$Push = new PushOver(PUSHOVER_API);
+
+$Spy = new WASpy(DB_HOST, DB_USER, DB_PASS, DB_NAME, PHONE_NUMBER);
 
 $Db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 if ($Db->connect_errno) {
@@ -25,12 +30,26 @@ function GetGClient() {
 	return $GClient;
 }
 
+function GetPush() {
+	global $Push;
+	return $Push;
+}
+
+function GetSpy() {
+	global $Spy;
+	return $Spy;
+}
+
 $GWorker->addFunction(WASPY_GMAN . '_onPresence', function(GearmanJob $job) {
 	$presence = unserialize($job->workload());
 	if ($stmt = GetDb()->prepare('INSERT INTO ' . DB_PREFIX . 'presence (phone_rcpt, phone_from, status, received) VALUES (?, ?, ?, ?)')) {
 		$stmt->bind_param('ssss', $presence[0], jid2phone($presence[1]), $presence[2], ts2date(time()));
 		$stmt->execute();
 		$stmt->close();
+		// pushover test
+		if(GetSpy()->needToNotify(jid2phone($presence[1]), 'onPresence', $presence[2])) {
+			GetPush()->sendMessage(PUSHOVER_KEY, jid2phone($presence[1]) . ' is ' . $presence[2], Array());
+		}
 	} else {
 		doOutput(GetDb()->error);
 	}
@@ -42,6 +61,11 @@ $GWorker->addFunction(WASPY_GMAN . '_onGetMessage', function(GearmanJob $job) {
 		$stmt->bind_param('ssssssss', $msg[0], jid2phone($msg[1]), $msg[2], $msg[3], Ts2Date($msg[4]), $msg[5], $bodyDB, Ts2Date(time()));
 		$stmt->execute();
 		$stmt->close();
+		
+		// pushover test
+		if(GetSpy()->needToNotify(jid2phone($msg[1]), 'onGetMessage')) {
+			GetPush()->sendMessage(PUSHOVER_KEY, 'Message received from ' . jid2phone($msg[1]), Array(), true);
+		}
 	} else {
 		doOutput(GetDb()->db->error);
 	}
@@ -83,12 +107,14 @@ $GWorker->addFunction(WASPY_GMAN . '_onConnect', function(GearmanJob $job) {
 		$stmt->close();
 		
 		//re-subscribe to active_subscribers
-		if($stmt = GetDb()->prepare('SELECT phone_from FROM ' . DB_PREFIX . 'active_subscribers WHERE phone_rcpt = ?')) {
-			$stmt->bind_param('s', PHONE_NUMBER);
+		if($stmt = GetDb()->prepare('SELECT phone_from FROM ' . DB_PREFIX . 'subscriptions_active')) {
+			$stmt->execute();
 			$stmt->bind_result($phone_from);
+			//sleep(2);
 			while($stmt->fetch()) {
-				GetGClient()->doNormal(WASPY_GMAN . '_PresenceSubscribe', $phone_from);
+				GetGClient()->addTaskBackground(WASPY_GMAN . '_PresenceSubscribe', $phone_from);
 			}
+			GetGClient()->runTasks();
 			$stmt->close();
 		}
 	} else {
