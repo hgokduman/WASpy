@@ -28,7 +28,7 @@ Is someone hiding the 'last seen' timestamp? No problem. Tell WASpy to collect t
 
 ### Installation ###
 
-* Make sure you've got your cellular number registered with WhatsApp. You may use [yowsup](https://github.com/tgalal/yowsup) to do so and to get get the necessary ident and password.
+* Make sure you've got your cellular number registered with WhatsApp. You may use [yowsup](https://github.com/tgalal/yowsup) to do so and to get get the necessary ident and password. You also may use http://coderus.openrepos.net/whitesoft/whatsapp_sms to receive the confirmation code.
 * Create the database tables using the DDL in database.sql (please replace %db_prefix% with prefix you want to use).
 * Edit config.inc.php.dist and save as config.inc.php
 * Go into the cli folder and start using ./startAll.sh

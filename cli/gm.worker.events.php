@@ -49,7 +49,7 @@ $GWorker->addFunction(WASPY_GMAN . '_onPresence', function(GearmanJob $job) {
 
 		// send push notification
 		if(GetSpy()->needToNotify(jid2phone($presence[1]), 'onPresence', $presence[2])) {
-			GetPush()->sendMessage(PUSHOVER_KEY, jid2phone($presence[1]) . ' is ' . $presence[2], Array());
+			GetPush()->sendMessage(PUSHOVER_KEY, '+' . jid2phone($presence[1]) . ' is ' . $presence[2], Array());
 		}
 	} else {
 		doOutput(GetDb()->error);
@@ -65,7 +65,7 @@ $GWorker->addFunction(WASPY_GMAN . '_onGetMessage', function(GearmanJob $job) {
 		
 		// send push notification
 		if(GetSpy()->needToNotify(jid2phone($msg[1]), 'onGetMessage')) {
-			GetPush()->sendMessage(PUSHOVER_KEY, 'Message received from ' . jid2phone($msg[1]), Array(), true);
+			GetPush()->sendMessage(PUSHOVER_KEY, 'Message received from +' . jid2phone($msg[1]), Array(), true);
 		}
 	} else {
 		doOutput(GetDb()->db->error);
