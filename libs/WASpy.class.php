@@ -189,12 +189,12 @@ class WASpy {
 	 */
 	public function getPresenceData($phone=null, $rows=100) {
 		$rows = Array();
-		if($stmt = $this->db->prepare('SELECT id, phone_from phone_number, status, received FROM ' . DB_PREFIX . 'presence WHERE phone_from like ? order by id desc limit 100')) {
+		if($stmt = $this->db->prepare('SELECT id, phone_from phone_number, status, ts_start, ts_stop FROM ' . DB_PREFIX . 'status WHERE phone_from like ? order by id desc limit 100')) {
 			$stmt->bind_param('s', is_null($phone) ? '%' : $phone);
 			$stmt->execute();
-			$stmt->bind_result($id, $phone_number, $status, $received);
+			$stmt->bind_result($id, $phone_number, $status, $ts_start, $ts_stop);
 			while($stmt->fetch()) {
-				$rows[] = Array('id' => $id, 'phone_number'=> $phone_number, 'status'=>$status, 'received' => $received);
+				$rows[] = Array('id' => $id, 'phone_number'=> $phone_number, 'status'=>$status, 'ts_start' => $ts_start, 'ts_stop' => $ts_stop);
 			}
 			$stmt->close();
 		}

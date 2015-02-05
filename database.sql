@@ -78,3 +78,67 @@ CREATE TABLE %db_prefix%pushmessages (
   ts_ack timestamp NULL DEFAULT NULL,
   PRIMARY KEY (request_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+CREATE TABLE %db_prefix%status (
+  id bigint(20) NOT NULL AUTO_INCREMENT,
+  phone_rcpt varchar(30) NOT NULL,
+  phone_from varchar(30) NOT NULL,
+  status varchar(20) NOT NULL,
+  ts_start datetime NOT NULL,
+  ts_stop datetime DEFAULT NULL,
+  id_start bigint(20) NOT NULL,
+  id_stop bigint(20) DEFAULT NULL,
+  PRIMARY KEY (id),
+  KEY phone_from (phone_from),
+  KEY id_start (id_start),
+  KEY ts_stop (ts_stop)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+
+DROP TRIGGER IF EXISTS %db_prefix%presence_status;
+
+delimiter |
+
+CREATE TRIGGER %db_prefix%presence_status AFTER INSERT ON %db_prefix%presence
+	FOR EACH ROW
+	BEGIN
+		declare status_id BIGINT(20);
+		
+		IF NEW.status = 'available' THEN
+			INSERT %db_prefix%status 	(phone_rcpt, phone_from, status, ts_start, id_start) VALUES
+								(NEW.phone_rcpt, NEW.phone_from, NEW.status, NEW.received, NEW.id);
+		ELSEIF NEW.status = 'unavailable' THEN
+			SELECT max(id) INTO status_id FROM %db_prefix%status 
+			WHERE %db_prefix%status.phone_from = NEW.phone_from 
+				AND %db_prefix%status.phone_rcpt = NEW.phone_rcpt 
+				AND %db_prefix%status.id_stop IS NULL
+				AND %db_prefix%status.status = 'available';
+
+				IF status_id IS NULL THEN
+					INSERT %db_prefix%status 	(phone_rcpt, phone_from, status, ts_start) VALUES
+										(NEW.phone_rcpt, NEW.phone_from, 'available', NEW.received);
+					set status_id = (select last_insert_id());
+				END IF;
+				
+				UPDATE %db_prefix%status SET id_stop = NEW.id, ts_stop = NEW.received WHERE %db_prefix%status.id = status_id;
+		ELSEIF NEW.status = 'start' THEN
+			SELECT max(id) INTO status_id FROM %db_prefix%status 
+			WHERE %db_prefix%status.phone_from = NEW.phone_from 
+				AND %db_prefix%status.phone_rcpt = NEW.phone_rcpt 
+				AND %db_prefix%status.id_stop IS NULL
+				AND %db_prefix%status.status = 'stop';
+			UPDATE %db_prefix%status SET id_stop = NEW.id, ts_stop = NEW.received WHERE %db_prefix%status.id = status_id;
+		ELSEIF NEW.status = 'stop' THEN
+			SELECT max(id) INTO status_id FROM %db_prefix%status 
+			WHERE %db_prefix%status.phone_from = NEW.phone_from 
+				AND %db_prefix%status.phone_rcpt = NEW.phone_rcpt 
+				AND %db_prefix%status.id_stop IS NULL
+				AND %db_prefix%status.status = 'available';
+			UPDATE %db_prefix%status SET id_stop = NEW.id, ts_stop = NEW.received WHERE %db_prefix%status.id = status_id;
+			INSERT %db_prefix%status 	(phone_rcpt, phone_from, status, ts_start, id_start) VALUES
+								(NEW.phone_rcpt, NEW.phone_from, NEW.status, NEW.received, NEW.id);
+		END IF;
+	END;
+|
+
+delimiter ;
