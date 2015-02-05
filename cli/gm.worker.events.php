@@ -4,10 +4,11 @@ require_once(WASPY_DIR . '/libs/functions.inc.php');
 require_once(WASPY_DIR . '/libs/PushOver.class.php');
 require_once(WASPY_DIR . '/libs/WASpy.class.php');
 
+
 $GWorker= new GearmanWorker();
 $GWorker->addServer();
 $GWorker->setId(WASPY_GMAN . '_Events');
-
+echo 'ok';
 $GClient= new GearmanClient();
 $GClient->addServer();
 
@@ -114,6 +115,7 @@ $GWorker->addFunction(WASPY_GMAN . '_onConnect', function(GearmanJob $job) {
 			//sleep(2);
 			while($stmt->fetch()) {
 				GetGClient()->addTaskBackground(WASPY_GMAN . '_PresenceSubscribe', $phone_from);
+				usleep(300000);
 			}
 			GetGClient()->runTasks();
 			$stmt->close();
