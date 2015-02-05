@@ -84,9 +84,9 @@ CREATE TABLE %db_prefix%status (
   phone_rcpt varchar(30) NOT NULL,
   phone_from varchar(30) NOT NULL,
   status varchar(20) NOT NULL,
-  ts_start datetime NOT NULL,
+  ts_start datetime DEFAULT NULL,
   ts_stop datetime DEFAULT NULL,
-  id_start bigint(20) NOT NULL,
+  id_start bigint(20) DEFAULT NULL,
   id_stop bigint(20) DEFAULT NULL,
   PRIMARY KEY (id),
   KEY phone_from (phone_from),
@@ -115,8 +115,8 @@ CREATE TRIGGER %db_prefix%presence_status AFTER INSERT ON %db_prefix%presence
 				AND %db_prefix%status.status = 'available';
 
 				IF status_id IS NULL THEN
-					INSERT %db_prefix%status 	(phone_rcpt, phone_from, status, ts_start) VALUES
-										(NEW.phone_rcpt, NEW.phone_from, 'available', NEW.received);
+					INSERT %db_prefix%status 	(phone_rcpt, phone_from, status) VALUES
+										(NEW.phone_rcpt, NEW.phone_from, 'available');
 					set status_id = (select last_insert_id());
 				END IF;
 				
@@ -134,7 +134,10 @@ CREATE TRIGGER %db_prefix%presence_status AFTER INSERT ON %db_prefix%presence
 				AND %db_prefix%status.phone_rcpt = NEW.phone_rcpt 
 				AND %db_prefix%status.id_stop IS NULL
 				AND %db_prefix%status.status = 'available';
-			UPDATE %db_prefix%status SET id_stop = NEW.id, ts_stop = NEW.received WHERE %db_prefix%status.id = status_id;
+				
+			IF status_id IS NOT NULL THEN
+			  UPDATE %db_prefix%status SET id_stop = NEW.id, ts_stop = NEW.received WHERE %db_prefix%status.id = status_id;
+			END IF;
 			INSERT %db_prefix%status 	(phone_rcpt, phone_from, status, ts_start, id_start) VALUES
 								(NEW.phone_rcpt, NEW.phone_from, NEW.status, NEW.received, NEW.id);
 		END IF;
