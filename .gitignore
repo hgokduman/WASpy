@@ -3,5 +3,7 @@ nextChallenge.dat
 cli/test
 cli/.pid/*.pid
 cli/.nohup/*.out
+cli/*.out
 .htaccess
 logos
+playground
