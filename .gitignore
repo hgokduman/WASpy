@@ -7,3 +7,5 @@ cli/*.out
 .htaccess
 logos
 playground
+application/config/facebook.php
+application/config/database.php

@@ -1,0 +1,62 @@
+        table.ui-responsive table { width: 100%; }
+        table.ui-responsive td,th { font-size: 0.8em; text-align: left;}
+        table.ui-responsive thead th,
+        table.ui-responsive tbody tr:last-child {
+            border-bottom: 1px solid #d6d6d6; /* non-RGBA fallback */
+            border-bottom: 1px solid rgba(0,0,0,.1);
+        }
+        table.ui-responsive tbody th,
+        table.ui-responsive tbody td {
+            border-bottom: 1px solid #e6e6e6; /* non-RGBA fallback  */
+            border-bottom: 1px solid rgba(0,0,0,.05);
+        }
+        table.ui-responsive tbody tr:last-child th,
+        table.ui-responsive tbody tr:last-child td {
+            border-bottom: 0;
+        }
+        table.ui-responsive tbody tr:nth-child(odd) td,
+        table.ui-responsive tbody tr:nth-child(odd) th {
+            background-color: #eeeeee; /* non-RGBA fallback  */
+            background-color: rgba(0,0,0,.04);
+        }
+
+/* Basic settings */
+.ui-li-static.ui-collapsible {
+    padding: 0;
+}
+.ui-li-static.ui-collapsible > .ui-collapsible-content > .ui-listview,
+.ui-li-static.ui-collapsible > .ui-collapsible-heading {
+    margin: 0;
+}
+.ui-li-static.ui-collapsible > .ui-collapsible-content {
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-right: 0;
+    border-bottom-width: 0;
+}
+/* collapse vertical borders */
+.ui-li-static.ui-collapsible > .ui-collapsible-content > .ui-listview > li.ui-last-child,
+.ui-li-static.ui-collapsible.ui-collapsible-collapsed > .ui-collapsible-heading > a.ui-btn {
+    border-bottom-width: 0;
+}
+.ui-li-static.ui-collapsible > .ui-collapsible-content > .ui-listview > li.ui-first-child,
+.ui-li-static.ui-collapsible > .ui-collapsible-content > .ui-listview > li.ui-first-child > a.ui-btn,
+.ui-li-static.ui-collapsible > .ui-collapsible-heading > a.ui-btn {
+    border-top-width: 0;
+}
+/* Remove right borders */
+.ui-li-static.ui-collapsible > .ui-collapsible-heading > a.ui-btn,
+.ui-li-static.ui-collapsible > .ui-collapsible-content > .ui-listview > .ui-li-static,
+.ui-li-static.ui-collapsible > .ui-collapsible-content > .ui-listview > li > a.ui-btn,
+.ui-li-static.ui-collapsible > .ui-collapsible-content {
+    border-right-width: 0;
+}
+/* Remove left borders */
+/* Here, we need class ui-listview-outer to identify the outermost listview */
+.ui-listview-outer > .ui-li-static.ui-collapsible .ui-li-static.ui-collapsible.ui-collapsible,
+.ui-listview-outer > .ui-li-static.ui-collapsible > .ui-collapsible-heading > a.ui-btn,
+.ui-li-static.ui-collapsible > .ui-collapsible-content {
+    border-left-width: 0;
+}
+.presence-stats-date { font-weight: bold; }
+.presence-stats-time { padding-left: 1em; }

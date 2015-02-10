@@ -1,0 +1,6 @@
+<?php
+$config['facebook']['api_id'] = '';
+$config['facebook']['app_secret'] = '';
+$config['facebook']['redirect_url'] = site_url() . 'OAuth/auth';
+$config['facebook']['permissions'] = array('public_profile');
+$config['facebook']['admin_uid'] = '';
